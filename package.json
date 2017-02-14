@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "electron index.js",
-    "build:dark": "electron index.js --args dark",
+    "build:dark": "electron index.js dark",
     "build:first": "electron-rebuild && electron index.js"
   },
   "author": "Angus Dippenaar",

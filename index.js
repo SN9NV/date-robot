@@ -25,7 +25,7 @@ app.on('ready', () => {
 	if (process.platform === 'darwin') {
 		image = nativeImage.createFromPath('robo_Template.png');
 	} else {
-		image = nativeImage.createFromPath(process.argv.indexOf('dark') ? 'robo_Ambiance.png' : 'robo_Radiance.png');
+		image = nativeImage.createFromPath(process.argv.indexOf('dark') === -1 ? 'robo_Radiance.png' : 'robo_Ambiance.png');
 	}
 
 	tray = new Tray(image);
