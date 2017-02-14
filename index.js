@@ -2,9 +2,10 @@
  * Created by angus on 14/02/17.
  */
 
-const {app, nativeImage, Menu, Tray} = require('electron');
+const { app, nativeImage, Menu, Tray } = require('electron');
 const robot = require('robotjs');
 let tray = null;
+let day = 0;
 
 String.prototype.lpad = function (length, char) {
 	let padding = char.repeat(length);
@@ -29,9 +30,64 @@ app.on('ready', () => {
 	}
 
 	tray = new Tray(image);
-	let contextMenu = Menu.buildFromTemplate([
+
+	tray.setToolTip('Click to type out the date');
+	tray.setContextMenu(getContextMenu(tray, false));
+
+	tray.on('click', () => {
+		for (let item in contextMenu) {
+			if (contextMenu.hasOwnProperty(item) && contextMenu[item].checked) {
+				return robot.typeString(getDateString(contextMenu[item]));
+			}
+		}
+	});
+});
+
+function getDateString(type) {
+	let now = new Date();
+	if (day) {
+		now.setDate(now.getDate() + day);
+	}
+
+	switch (type) {
+		case 'underscore':
+			return `${now.getFullYear()}_${(now.getMonth() + 1).lpad(2)}_${now.getDate()}`;
+		case 'dayOfWeek':
+			return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][now.getDay()];
+		case 'timeLocale':
+			return now.toLocaleTimeString();
+		case 'timeWithoutSeconds':
+			return `${now.getHours().lpad(2)}:${now.getMinutes().lpad(2)}`;
+		case 'timeWithSeconds':
+			return `${now.getHours().lpad(2)}:${now.getMinutes().lpad(2)}:${now.getSeconds().lpad(2)}`;
+		case 'timestamp':
+			return now.getTime();
+		default:
+			return now.toLocaleDateString();
+	}
+}
+
+function typeString(str) {
+	let match = typeof str === 'string' ? str.match(/[:_]/) : null;
+
+	if (typeof match === 'object') {
+		str = str.split(match);
+		for (let chars of str) {
+			robot.typeString(chars);
+
+			if (str.last() !== chars) {
+				robot.keyTap(match, 'shift')
+			}
+		}
+	} else {
+		robot.typeString(str);
+	}
+}
+
+function getContextMenu() {
+	return Menu.buildFromTemplate([
 		{
-			label: `Normal Date				${getDateString()}`,
+			label: `System Date				${getDateString()}`,
 			date: null,
 			type: 'radio',
 			checked: true,
@@ -74,57 +130,35 @@ app.on('ready', () => {
 			click: () => typeString(getDateString('timestamp'))
 		},
 		{
+			type: 'separator'
+		},
+		{
+			label: 'Subtract 1 day',
+			click: () => {
+				day--;
+				tray.setContextMenu(getContextMenu());
+			}
+		},
+		{
+			label: 'Add 1 day',
+			click: () => {
+				day++;
+				tray.setContextMenu(getContextMenu());
+			}
+		},
+		{
+			label: 'Go to today',
+			click: () => {
+				day = 0;
+				tray.setContextMenu(getContextMenu());
+			}
+		},
+		{
+			type: 'separator'
+		},
+		{
 			label: 'Exit',
 			click: () => app.quit()
 		}
 	]);
-
-	tray.setToolTip('Click to type out the date');
-	tray.setContextMenu(contextMenu);
-
-	tray.on('click', () => {
-		for (let item in contextMenu) {
-			if (contextMenu.hasOwnProperty(item) && contextMenu[item].checked) {
-				return robot.typeString(getDateString(contextMenu[item]));
-			}
-		}
-	});
-});
-
-function getDateString(type) {
-	const now = new Date();
-
-	switch (type) {
-		case 'underscore':
-			return `${now.getFullYear()}_${(now.getMonth() + 1).lpad(2)}_${now.getDate()}`;
-		case 'dayOfWeek':
-			return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][now.getDay()];
-		case 'timeLocale':
-			return now.toLocaleTimeString();
-		case 'timeWithoutSeconds':
-			return `${now.getHours().lpad(2)}:${now.getMinutes().lpad(2)}`;
-		case 'timeWithSeconds':
-			return `${now.getHours().lpad(2)}:${now.getMinutes().lpad(2)}:${now.getSeconds().lpad(2)}`;
-		case 'timestamp':
-			return now.getTime();
-		default:
-			return now.toLocaleDateString();
-	}
-}
-
-function typeString(str) {
-	let match = typeof str === 'string' ? str.match(/[:\/_]/) : null;
-
-	if (typeof match === 'object') {
-		str = str.split(match);
-		for (let chars of str) {
-			robot.typeString(chars);
-
-			if (str.last() !== chars) {
-				robot.keyTap(match, 'shift')
-			}
-		}
-	} else {
-		robot.typeString(str);
-	}
 }
