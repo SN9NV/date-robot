@@ -32,9 +32,10 @@ app.on('ready', () => {
 	tray = new Tray(image);
 
 	tray.setToolTip('Click to type out the date');
-	tray.setContextMenu(getContextMenu(tray, false));
+	tray.setContextMenu(getContextMenu());
 
 	tray.on('click', () => {
+		tray.setContextMenu(getContextMenu());
 		for (let item in contextMenu) {
 			if (contextMenu.hasOwnProperty(item) && contextMenu[item].checked) {
 				return robot.typeString(getDateString(contextMenu[item]));
@@ -61,7 +62,7 @@ function getDateString(type) {
 		case 'timeWithSeconds':
 			return `${now.getHours().lpad(2)}:${now.getMinutes().lpad(2)}:${now.getSeconds().lpad(2)}`;
 		case 'timestamp':
-			return now.getTime();
+			return Math.floor(now.getTime() / 1000);
 		default:
 			return now.toLocaleDateString();
 	}
@@ -82,6 +83,8 @@ function typeString(str) {
 	} else {
 		robot.typeString(str);
 	}
+
+	tray.setContextMenu(getContextMenu());
 }
 
 function getContextMenu() {
