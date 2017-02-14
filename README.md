@@ -16,3 +16,8 @@ npm install && npm run build:first
 For non-OSX operating systems, you have a choice of 2 themes, normal and dark.
 Normal is applied normally, but dark is applied by giving the argument `dark` on launch.
 OSX has a theme engine that uses the template icon to keep the theme consistent (I believe).
+
+### Screenshots
+Ubuntu
+
+![Ubuntu Screenshot](https://github.com/SN9NV/date-robot/blob/master/Ubuntu-screenshot.png "Ubuntu Screenshot")
