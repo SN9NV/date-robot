@@ -12,6 +12,9 @@
   "license": "MIT",
   "repository": "github.com/SN9NV/date-robot",
   "dependencies": {
+    "node-gyp": "^3.5.0",
+    "electron": "^1.4.15",
+    "electron-rebuild": "^1.5.7",
     "robotjs": "^0.4.5"
   }
 }

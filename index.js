@@ -2,13 +2,15 @@
  * Created by angus on 14/02/17.
  */
 
-const { app, nativeImage, Menu, Tray } = require('electron');
+const { app, globalShortcut, nativeImage, Menu, Tray } = require('electron');
 const robot = require('robotjs');
 let tray = null;
 let day = 0;
+let writing = false;
+let contextMenu = returnContextMenu();
 
 String.prototype.lpad = function (length, char) {
-	let padding = char.repeat(length);
+	const padding = char.repeat(length);
 
 	return padding.substr(0, padding.length - this.length) + this;
 };
@@ -32,17 +34,32 @@ app.on('ready', () => {
 	tray = new Tray(image);
 
 	tray.setToolTip('Click to type out the date');
-	tray.setContextMenu(getContextMenu());
+	updateTimes();
 
-	tray.on('click', () => {
-		tray.setContextMenu(getContextMenu());
-		for (let item in contextMenu) {
-			if (contextMenu.hasOwnProperty(item) && contextMenu[item].checked) {
-				return robot.typeString(getDateString(contextMenu[item]));
-			}
-		}
+	tray.on('click', typeDate);
+	
+	globalShortcut.register('CommandorControl+Shift+d', () => {
+		console.log('Writing');
+		setTimeout(typeDate, 300);
 	});
 });
+
+app.on('will-quit', globalShortcut.unregisterAll);
+
+function typeDate() {
+	if (!writing) {
+		writing = true;
+		setTimeout(() => writing = false, 1000);
+
+		contextMenu.forEach(item => {
+			if (item.checked && item.type === 'radio') {
+				return typeString(getDateString(item.date));
+			}
+		});
+	}
+	
+	updateTimes();
+}
 
 function getDateString(type) {
 	let now = new Date();
@@ -69,9 +86,9 @@ function getDateString(type) {
 }
 
 function typeString(str) {
-	let match = typeof str === 'string' ? str.match(/[:_]/) : null;
+	let match = (typeof str === 'string') ? str.match(/[:_]/) : null;
 
-	if (typeof match === 'object') {
+	if (match && match[0]) {
 		str = str.split(match);
 		for (let chars of str) {
 			robot.typeString(chars);
@@ -84,53 +101,66 @@ function typeString(str) {
 		robot.typeString(str);
 	}
 
-	tray.setContextMenu(getContextMenu());
 }
 
-function getContextMenu() {
-	return Menu.buildFromTemplate([
+function updateTimes() {
+	contextMenu = contextMenu.map(item => {
+		if (item.hasOwnProperty('date')) {
+			let label = item.label.split('\t');
+			label.pop();
+			label.push(getDateString(item.date));
+			item.label = label.join('\t');
+		}
+
+		return item;
+	});
+
+	tray.setContextMenu(Menu.buildFromTemplate(contextMenu));
+}
+
+function returnContextMenu() {
+	return [
+		{
+			label: 'write',
+			click: typeDate
+		},
+		{
+			type: 'separator'
+		},
 		{
 			label: `System Date				${getDateString()}`,
-			date: null,
-			type: 'radio',
-			checked: true,
-			click: () => typeString(getDateString())
+			date: 'systemDate',
+			type: 'radio'
 		},
 		{
 			label: `Underscore Date			${getDateString('underscore')}`,
 			date: 'underscore',
 			type: 'radio',
-			click: () => typeString(getDateString('underscore'))
 		},
 		{
 			label: `Day of the week			${getDateString('dayOfWeek')}`,
 			date: 'dayOfWeek',
 			type: 'radio',
-			click: () => typeString(getDateString('dayOfWeek'))
 		},
 		{
 			label: `System Time				${getDateString('timeLocale')}`,
 			date: 'timeLocale',
 			type: 'radio',
-			click: () => typeString(getDateString('timeLocale'))
 		},
 		{
 			label: `Time without seconds	${getDateString('timeWithoutSeconds')}`,
-			date: 'time',
+			date: 'timeWithoutSeconds',
 			type: 'radio',
-			click: () => typeString(getDateString('timeWithoutSeconds'))
 		},
 		{
 			label: `Time with seconds		${getDateString('timeWithSeconds')}`,
-			date: 'time',
+			date: 'timeWithSeconds',
 			type: 'radio',
-			click: () => typeString(getDateString('timeWithSeconds'))
 		},
 		{
 			label: `Timestamp				${getDateString('timestamp')}`,
 			date: 'timestamp',
 			type: 'radio',
-			click: () => typeString(getDateString('timestamp'))
 		},
 		{
 			type: 'separator'
@@ -163,5 +193,5 @@ function getContextMenu() {
 			label: 'Exit',
 			click: () => app.quit()
 		}
-	]);
+	];
 }
