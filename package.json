@@ -1,0 +1,17 @@
+{
+  "name": "date-robot",
+  "version": "1.0.0",
+  "description": "Writes out the current date in a specified format",
+  "main": "index.js",
+  "scripts": {
+    "build": "electron index.js",
+    "build:dark": "electron index.js --args dark",
+    "build:first": "electron-rebuild && electron index.js"
+  },
+  "author": "Angus Dippenaar",
+  "license": "MIT",
+  "repository": "github.com/SN9NV/date-robot",
+  "dependencies": {
+    "robotjs": "^0.4.5"
+  }
+}
