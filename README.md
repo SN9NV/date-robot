@@ -3,10 +3,10 @@ A tray applet that gives you the ability to type out the date in the active wind
 
 ##### Pre-requisites for building
  * NodeJS
+ * Node-gyp (npm install -g node-gyp)
  * Electron (npm install -g electron)
  * Electron-rebuild (npm install -g electron-rebuild)
- * Node-gyp (npm install -g node-gyp)
- * Everything: npm install -g node-gyp electron electron-rebuild
+Get all dependencies: npm install -g node-gyp electron electron-rebuild
  
 ##### Build
 npm install && npm run build:first
