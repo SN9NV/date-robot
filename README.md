@@ -7,7 +7,8 @@ A tray applet that gives you the ability to type out the date in the active wind
  * Electron (npm install -g electron)
  * Electron-rebuild (npm install -g electron-rebuild)
 
-Get all dependencies: npm install -g node-gyp electron electron-rebuild
+Get all dependencies: sudo npm install -g node-gyp electron electron-rebuild
+(Windows won't need the `sudo` part of the above command)
  
 ### Build
 npm install && npm run build:first
