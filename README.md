@@ -19,4 +19,4 @@ Ubuntu
 
 Date picker
 
-![Date picker](https://github.com/SN9NV/date-robot/blob/master/date-picker.png.png "Date picker")
+![Date picker](https://github.com/SN9NV/date-robot/blob/master/date-picker.png "Date picker")
