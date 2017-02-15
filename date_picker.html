@@ -20,6 +20,12 @@
         ipcRenderer.send('picked', event.date);
       });
 
+      $(document).keyup(event => {
+        if (event.keyCode === 27) {
+          ipcRenderer.send('close');
+        }
+      });
+
       function reset() {
         $('#date-picker').datepicker('update', new Date());
       }
