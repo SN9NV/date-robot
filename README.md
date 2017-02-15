@@ -16,3 +16,7 @@ OSX has a theme engine that uses the template icon to keep the theme consistent 
 Ubuntu
 
 ![Ubuntu Screenshot](https://github.com/SN9NV/date-robot/blob/master/Ubuntu-screenshot.png "Ubuntu Screenshot")
+
+Date picker
+
+![Date picker](https://github.com/SN9NV/date-robot/blob/master/date-picker.png.png "Date picker")
