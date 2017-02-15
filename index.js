@@ -2,14 +2,27 @@
  * Created by angus on 14/02/17.
  */
 
-const { app, globalShortcut, nativeImage, Menu, Tray } = require('electron');
+const { app, BrowserWindow, globalShortcut, ipcMain, nativeImage, Menu, Tray } = require('electron');
 const robot = require('robotjs');
+
 let tray = null;
+let window = null;
 let day = 0;
 let writing = false;
 let contextMenu = returnContextMenu();
 
 app.on('ready', () => {
+	window = new BrowserWindow({width: 220, height: 285, show: false, frame: false});
+
+	window.loadURL(require('url').format({
+		pathname:require('path').join(__dirname, 'date_picker.html'),
+		protocol: 'file:',
+		slashes: true
+	}));
+
+	ipcMain.on('picked', updateDay);
+	ipcMain.on('message', (event, data) => console.log(data));
+
 	let image;
 	if (process.platform === 'darwin') {
 		image = nativeImage.createFromPath('robo_Template.png');
@@ -30,7 +43,10 @@ app.on('ready', () => {
 	});
 });
 
-app.on('will-quit', globalShortcut.unregisterAll);
+app.on('will-quit', () => {
+	globalShortcut.unregisterAll();
+	window = null;
+});
 
 function typeDate() {
 	if (writing === false) {
@@ -111,8 +127,19 @@ function setActive(menuItem) {
 	});
 }
 
-function updateDay(menuItem) {
-	day += parseInt(menuItem.label) * (menuItem.add ? 1 : -1);
+function updateDay(event, date) {
+	date = new Date(date);
+	let now = new Date();
+
+	// now.setHours(0, 0, 0, 0);
+	// date.setHours(0, 0, 0, 0);
+
+	let diff = (date - new Date()) / (86400 * 1000);
+
+	day = Math.ceil(diff);
+	console.log(day);
+
+	window.hide();
 
 	updateTimes();
 }
@@ -137,6 +164,10 @@ function lpad(value, length, char) {
 		char = char || ' ';
 		return char.repeat(length).substr(0, length - value.length) + value;
 	}
+}
+
+function showWindow() {
+	window.show();
 }
 
 function returnContextMenu() {
@@ -195,22 +226,8 @@ function returnContextMenu() {
 			type: 'separator'
 		},
 		{
-			label: 'Subtract days',
-			submenu: [
-				{ label: '1', add: false, click: updateDay },
-				{ label: '2', add: false, click: updateDay },
-				{ label: '5', add: false, click: updateDay },
-				{ label: '10', add: false, click: updateDay }
-			]
-		},
-		{
-			label: 'Add days',
-			submenu: [
-				{ label: '1', add: true, click: updateDay },
-				{ label: '2', add: true, click: updateDay },
-				{ label: '5', add: true, click: updateDay },
-				{ label: '10', add: true, click: updateDay }
-			]
+			label: 'Pick date',
+			click: showWindow
 		},
 		{
 			label: 'Go to today',

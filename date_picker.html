@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="datepicker/bootstrap-datepicker3.standalone.css">
+  </head>
+  <dody style="height: 100%; display: flex; flex-direction: column; align-items: center">
+    <div id="date-picker"></div>
+    <button class="btn btn-default" style="margin: auto 8px 4px 8px;" onclick="reset()">Go to Today</button>
+
+    <script>
+      const { ipcRenderer } = require('electron');
+      const $ = require('jquery');
+
+      require('./datepicker/bootstrap-datepicker');
+
+      $('#date-picker').datepicker({
+        autoclose: true,
+        todayHighlight: true
+      }).on('changeDate', event => {
+        ipcRenderer.send('picked', event.date);
+      });
+
+      function reset() {
+        $('#date-picker').datepicker('update', new Date());
+      }
+    </script>
+  </dody>
+</html>
