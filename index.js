@@ -12,7 +12,7 @@ let writing = false;
 let contextMenu = returnContextMenu();
 
 app.on('ready', () => {
-	window = new BrowserWindow({width: 220, height: 285, show: false, frame: false});
+	window = new BrowserWindow({width: 220, height: 285, show: false, frame: false, icon: 'robo_Colour.png'});
 
 	window.loadURL(require('url').format({
 		pathname:require('path').join(__dirname, 'date_picker.html'),
@@ -21,7 +21,6 @@ app.on('ready', () => {
 	}));
 
 	ipcMain.on('picked', updateDay);
-	ipcMain.on('message', (event, data) => console.log(data));
 
 	let image;
 	if (process.platform === 'darwin') {
@@ -37,10 +36,7 @@ app.on('ready', () => {
 
 	tray.on('click', typeDate);
 	
-	globalShortcut.register('CmdOrCtrl+Shift+d', () => {
-		console.log('Writing');
-		setTimeout(typeDate, 500);
-	});
+	globalShortcut.register('CmdOrCtrl+Shift+d', () => setTimeout(typeDate, 500));
 });
 
 app.on('will-quit', () => {
@@ -128,16 +124,7 @@ function setActive(menuItem) {
 }
 
 function updateDay(event, date) {
-	date = new Date(date);
-	let now = new Date();
-
-	// now.setHours(0, 0, 0, 0);
-	// date.setHours(0, 0, 0, 0);
-
-	let diff = (date - new Date()) / (86400 * 1000);
-
-	day = Math.ceil(diff);
-	console.log(day);
+	day = Math.ceil((new Date(date) - new Date()) / (86400 * 1000));
 
 	window.hide();
 
