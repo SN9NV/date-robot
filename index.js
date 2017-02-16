@@ -20,7 +20,9 @@ app.on('ready', () => {
 		slashes: true
 	}));
 
+	ipcMain.on('message', (event, data) => console.log(data));
 	ipcMain.on('picked', updateDay);
+        ipcMain.on('close', event => window.hide());
 
 	let image;
 	if (process.platform === 'darwin') {
