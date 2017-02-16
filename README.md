@@ -4,7 +4,7 @@ A tray applet that gives you the ability to type out the date in the active wind
 ### Pre-requisites for building
  * NodeJS (https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
  * libxtst-dev and libpng++-dev (`sudo apt install libxtst-dev libpng++-dev`) for RobotJS (https://github.com/octalmage/robotjs)
- 
+
 ### Build
 npm install && npm run build:first
 

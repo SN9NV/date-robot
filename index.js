@@ -35,7 +35,7 @@ app.on('ready', () => {
 	updateTimes();
 
 	tray.on('click', typeDate);
-	
+
 	globalShortcut.register('CmdOrCtrl+Shift+d', () => setTimeout(typeDate, 500));
 });
 
@@ -55,7 +55,7 @@ function typeDate() {
 			}
 		});
 	}
-	
+
 	updateTimes();
 }
 
