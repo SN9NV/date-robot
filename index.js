@@ -13,7 +13,13 @@ let lastUnderscore = false;
 let contextMenu = returnContextMenu();
 
 app.on('ready', () => {
-	window = new BrowserWindow({width: 220, height: 285, show: false, frame: false, icon: 'robo_Colour.png'});
+	window = new BrowserWindow({
+		width: 220,
+		height: 285,
+		show: false,
+		frame: false,
+		skipTaskbar: true
+	});
 
 	window.loadURL(require('url').format({
 		pathname:require('path').join(__dirname, 'date_picker.html'),
