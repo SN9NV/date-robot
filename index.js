@@ -9,6 +9,7 @@ let tray = null;
 let window = null;
 let day = 0;
 let writing = false;
+let lastUnderscore = false;
 let contextMenu = returnContextMenu();
 
 app.on('ready', () => {
@@ -100,6 +101,10 @@ function typeString(str) {
 	} else {
 		robot.typeString(str);
 	}
+
+	if (lastUnderscore) {
+		robot.keyTap('_', 'shift');
+	}
 }
 
 function updateTimes() {
@@ -159,6 +164,18 @@ function showWindow() {
 	window.show();
 }
 
+function check(menuItem) {
+	contextMenu.forEach(item => {
+		if (item.type === 'checkbox') {
+			item.checked = menuItem.checked;
+		}
+	});
+
+	lastUnderscore = menuItem.checked;
+
+	updateTimes();
+}
+
 function returnContextMenu() {
 	return [
 		{
@@ -210,6 +227,15 @@ function returnContextMenu() {
 			date: 'timestamp',
 			type: 'radio',
 			click: setActive
+		},
+		{
+			type: 'separator'
+		},
+		{
+			label: 'Last underscore',
+			type: 'checkbox',
+			click: check,
+			checked: false
 		},
 		{
 			type: 'separator'
