@@ -29,7 +29,8 @@ app.on('ready', () => {
 
 	ipcMain.on('message', (event, data) => console.log(data));
 	ipcMain.on('picked', updateDay);
-        ipcMain.on('close', event => window.hide());
+	ipcMain.on('close', event => window.hide());
+	app.on('browser-window-blur', event => window.hide());
 
 	let image;
 	if (process.platform === 'darwin') {
@@ -45,7 +46,8 @@ app.on('ready', () => {
 
 	tray.on('click', typeDate);
 
-	globalShortcut.register('CmdOrCtrl+Shift+d', () => setTimeout(typeDate, 500));
+	globalShortcut.register('CmdOrCtrl+Shift+d', event => setTimeout(typeDate, 500));
+	globalShortcut.register('CmdOrCtrl+Shift+d+p', event => window.show());
 });
 
 app.on('will-quit', () => {
@@ -247,7 +249,7 @@ function returnContextMenu() {
 			type: 'separator'
 		},
 		{
-			label: 'Pick date',
+			label: `Pick date				${process.platform === 'darwin' ? 'Command' : 'Ctrl'}+Shift+D+P`,
 			click: showWindow
 		},
 		{
